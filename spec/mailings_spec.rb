@@ -45,15 +45,28 @@ describe IdentityApiClient::Mailings do
     let(:status) { 200 }
     let(:body) { fixture('get_mailing_response.json') }
     let(:request_path) { "https://test.com/api/mailings/5?api_token=#{api_token}" }
+    let(:bad_request_path) { "https://test.com/api/mailings/0?api_token=#{api_token}" }
 
     before(:each) do
       stub_request(:get, request_path).to_return(status: 200, body: body, headers: {:content_type => "application/json; charset=utf-8"} )
+      stub_request(:get, bad_request_path).to_return(status: 404)
     end
 
     it 'should return a new Mailing with the correct ID' do
       mailing = subject.mailings.find_by_id(5)
       expect(mailing).to be_kind_of(IdentityApiClient::Mailing)
       expect(mailing.id).to eq(5)
+    end
+
+    it 'should return a new Mailing with the correct ID if passed as string' do
+      mailing = subject.mailings.find_by_id('5')
+      expect(mailing).to be_kind_of(IdentityApiClient::Mailing)
+      expect(mailing.id).to eq(5)
+    end
+
+    it 'should cast any non-numeric ID passed, to a 0' do
+      mailing = subject.mailings.find_by_id('/path/to/steal/data')
+      expect(mailing).to be(false)
     end
   end
 end

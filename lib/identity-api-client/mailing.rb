@@ -4,7 +4,7 @@ module IdentityApiClient
     attr_accessor :name
 
     def attributes
-      resp = client.get_request(route_url("/api/mailings/#{id}?api_token=#{client.connection.configuration.options[:api_token]}"))
+      resp = client.get_request(route_url("/api/mailings/#{id.to_i}?api_token=#{client.connection.configuration.options[:api_token]}"))
       if resp.status < 400
         return resp.body
       else
@@ -17,7 +17,7 @@ module IdentityApiClient
         'api_token' => client.connection.configuration.options[:api_token],
         'mailing' => mailing_attributes
       }
-      resp = client.put_request(route_url("/api/mailings/#{id}"), params)
+      resp = client.put_request(route_url("/api/mailings/#{id.to_i}"), params)
       if resp.status < 400
         return self
       else
@@ -26,12 +26,12 @@ module IdentityApiClient
     end
 
     def send_sample(email)
-      resp = client.post_request(route_url("/api/mailings/#{id}/send_sample"), {email: email})
+      resp = client.post_request(route_url("/api/mailings/#{id.to_i}/send_sample"), {email: email})
       resp.status == 202
     end
 
     def send_mailing(search_id)
-      resp = client.post_request(route_url("/api/mailings/#{id}/send"), {search_id: search_id})
+      resp = client.post_request(route_url("/api/mailings/#{id.to_i}/send"), {search_id: search_id})
       resp.status == 202
     end
   end

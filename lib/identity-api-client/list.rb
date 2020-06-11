@@ -3,7 +3,7 @@ module IdentityApiClient
     attr_accessor :id
 
     def attributes
-      resp = client.get_request("/api/lists/#{id}?api_token=#{client.connection.configuration.options[:api_token]}")
+      resp = client.get_request("/api/lists/#{id.to_i}?api_token=#{client.connection.configuration.options[:api_token]}")
       if resp.status < 400
         return resp.body
       else
@@ -16,7 +16,7 @@ module IdentityApiClient
         'api_token' => client.connection.configuration.options[:api_token],
         'list' => list_attributes
       }
-      resp = client.put_request("/api/lists/#{id}", params)
+      resp = client.put_request("/api/lists/#{id.to_i}", params)
       if resp.status < 400
         return self
       else
@@ -28,7 +28,7 @@ module IdentityApiClient
       params = {
         'api_token' => client.connection.configuration.options[:api_token]
       }
-      resp = client.delete_request("/api/lists/#{id}", params)
+      resp = client.delete_request("/api/lists/#{id.to_i}", params)
       if resp.status < 400
         return self
       else
