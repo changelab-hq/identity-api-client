@@ -12,7 +12,7 @@ module IdentityApiClient
     end
 
     def find_by_id(id)
-      resp = client.get_request(route_url("/api/mailings/#{id}?api_token=#{client.connection.configuration.options[:api_token]}"))
+      resp = client.get_request(route_url("/api/mailings/#{id.to_i}?api_token=#{client.connection.configuration.options[:api_token]}"))
       if resp.status == 200
         return IdentityApiClient::Mailing.new(client: client, id: id)
       else
@@ -37,7 +37,7 @@ module IdentityApiClient
       params = {
         'api_token' => client.connection.configuration.options[:api_token]
       }
-      resp = client.post_request(route_url("/api/mailings/#{id}/clone"), params)
+      resp = client.post_request(route_url("/api/mailings/#{id.to_i}/clone"), params)
       if resp.status == 201
         return resp.body['mailing_id']
       else
@@ -46,7 +46,8 @@ module IdentityApiClient
     end
 
     def search(query)
-      resp = client.get_request(route_url("/api/mailings/search?query=#{query}&api_token=#{client.connection.configuration.options[:api_token]}"))
+      escaped_query = CGI.escape(query)
+      resp = client.get_request(route_url("/api/mailings/search?query=#{escaped_query}&api_token=#{client.connection.configuration.options[:api_token]}"))
       if resp.status == 200
         return resp.body.map { |l| IdentityApiClient::Mailing.new(client: client, id: l['id'], name: l['name']) }
       else
